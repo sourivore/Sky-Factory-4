@@ -1,6 +1,6 @@
 local config = {}
  
-config.rootPath = "https://raw.githubusercontent.com/sourivore/Sky-Factory-4/develop/files/"
+config.rootPath = "https://raw.githubusercontent.com/sourivore/Sky-Factory-4/develop/"
 
 config.folders = {
     ["bin"] = "/bin",
