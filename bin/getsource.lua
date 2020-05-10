@@ -1,4 +1,5 @@
 local config = require("_config")
+local internet = require("internet")
 local rootPath = config.rootPath
 
 for id, folder in pairs(config.folders) do
