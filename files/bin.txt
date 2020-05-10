@@ -1,5 +1,4 @@
 config.lua
-getsource.lua
 open.lua
 refresh.lua
 run.lua
