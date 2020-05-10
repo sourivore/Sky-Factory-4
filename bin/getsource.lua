@@ -2,9 +2,9 @@ local config = require("_config")
 local internet = require("internet")
 local rootPath = config.rootPath
 
-for id, folder in pairs(config.folders) do
-    local handle = internet.request(rootPath..id)
-    for line in handle do
-        print("LINE", line)
+for fileName, destPath in pairs(config.folders) do
+    local files = internet.request(rootPath..id..".txt")
+    for file in files do
+        print("LINE", file)
     end
 end
