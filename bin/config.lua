@@ -1,0 +1,1 @@
+os.execute("edit /usr/lib/_config.lua")
