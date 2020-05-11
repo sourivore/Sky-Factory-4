@@ -15,13 +15,13 @@ local signalReturnCancel = function(key)
   signalReturnAttempts[key] = 0
 end
 
-local signalReturnCall = function(address, port, key, callbackSuccess, callbackFailure, maxAttempts, payload)
+local signalReturnCall = function(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...)
   if signalReturnStatus[key] then
     signalReturnCancel(key, signalReturnStatus)
     callbackSuccess()
   else
     if signalReturnAttempts[key] < maxAttempts then
-      modem.send(address, port, key, payload)
+      modem.send(address, port, key, ...)
       signalReturnAttempts[key] = signalReturnAttempts[key] + 1
     else
       signalReturnCancel(key, signalReturnStatus)
@@ -30,7 +30,8 @@ local signalReturnCall = function(address, port, key, callbackSuccess, callbackF
   end
 end
 
-local signalReturn = function(address, port, key, callbackSuccess, callbackFailure, maxAttempts, payload)
+local signalReturn = function(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...)
+  local payload = ...
   return function()
     signalReturnCall(address, port, key, callbackSuccess, callbackFailure, maxAttempts, payload)
   end
@@ -49,12 +50,11 @@ _event.removeListeners = function(key)
 end
 
 _event.sendTimeout = function(address, port, key, callbackSuccess, callbackFailure, delay, maxAttempts, ...)
-  local payload = {...}
   signalReturnCancel(key, signalReturnStatus)
-  signalReturnCall(address, port, key, callbackSuccess, callbackFailure, maxAttempts, payload)
+  signalReturnCall(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...)
   signalReturnIds[key] = event.timer(
 	  delay,
-	  signalReturn(address, port, key, callbackSuccess, callbackFailure, maxAttempts, payload),
+	  signalReturn(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...),
 	  math.huge)
 end
 
