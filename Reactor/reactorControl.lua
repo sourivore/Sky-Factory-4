@@ -32,7 +32,8 @@ local onMessageReceived = function(type, msg)
 		return
 	end
 	if not reactor.isComplete() then
-		_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Le réacteur a essayé de démarrer un réacteur incomplet"), resX), 0, C_KO)
+		_gpu.set(1, 0,
+			_text.alignCenter(os.date("[%X] Le réacteur a essayé de démarrer un réacteur incomplet"), resX), 0, C_KO)
 		modem.broadcast(COMMUNICATION_PORT, MSG_TYPE_ACTIVATION, MSG_ERROR)
 	elseif msg == MSG_SHUTDOWN_POWER then
 		--SHUTDOWN REACTOR
@@ -57,12 +58,12 @@ end
 
 local drawPowerBtn = function(cPower)
 	_gpu.draw(-16, -9, {cPower}, {
-    	{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
+		{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0},
 		{1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1},
 		{1, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1},
 		{1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1},
 		{1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1},
-    	{1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1},
+		{1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1},
 		{1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1},
 		{1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1},
 		{0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0}
@@ -82,7 +83,7 @@ local onChangeActivation = function(_, _, x, y)
 end
 
 
-event.listen("modem_message", 
+event.listen("modem_message",
 	function(_, _, _, _, _, type, msg)
 		onMessageReceived(type, msg)
 	end

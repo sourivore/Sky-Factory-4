@@ -22,17 +22,18 @@ _component.closeBtn = function(state)
 end
 
 _component.bargraphH = function(x, y, width, height, current, maximum)
+	local newWidth = width
 	if width <= 0 then
         newWidth = resX + width - x + 1
     end
     local energyPercent = 100 * current / maximum
 	_gpu.fillColor(x, y, newWidth, height, 0xffffff)
 	if energyPercent > 0 then
-    	local green, blue = math.floor(255 * energyPercent / 100), 0
-    	local red = 255 - green
-    	local barColor = _gpu.rgbToHex(red, green, blue)
-    	local pixelCovered = newWidth * energyPercent / 100
-    	_gpu.fillColor(x,y, math.ceil(pixelCovered), height, barColor)
+		local green, blue = math.floor(255 * energyPercent / 100), 0
+		local red = 255 - green
+		local barColor = _gpu.rgbToHex(red, green, blue)
+		local pixelCovered = newWidth * energyPercent / 100
+		_gpu.fillColor(x,y, math.ceil(pixelCovered), height, barColor)
 	end
 	return energyPercent
 end

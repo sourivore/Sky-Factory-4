@@ -3,7 +3,7 @@ local gpu = component.gpu
 local _gpu = {}
 
 local charToHex = function(char)
-	local result = ""
+	local result
 	if char == 10 then
 		result = "A"
 	elseif char == 11 then
@@ -23,7 +23,7 @@ end
 
 local numberToHex = function(number)
 	local firstCharNum = math.floor(number / 16)
-	local secondCharNum = number - 16*firstCharNum 
+	local secondCharNum = number - 16*firstCharNum
 	local firstChar = charToHex(firstCharNum)
 	local secondChar = charToHex(secondCharNum)
 	return firstChar..secondChar
@@ -68,8 +68,8 @@ _gpu.fillColor = function(x,y, width, height, bg)
 end
 
 _gpu.set = function(x, y, text, size, fg, bg)
-	local fg = fg or 0xffffff
-	local bg = bg or 0x000000
+	fg = fg or 0xffffff
+	bg = bg or 0x000000
 	local resX, resY = gpu.getResolution()
 	local newX, newY = x, y
 	if x <= 0 then
@@ -115,7 +115,7 @@ _gpu.setAll = function(x, y, texts, size, fg, bg)
     end
 	local currentX = x
 	local currentSize = size
-	for index, text in pairs(texts) do
+	for _, text in pairs(texts) do
 		if type(text[1]) == "boolean" then
 			if text[1] then
 				text = text[2]

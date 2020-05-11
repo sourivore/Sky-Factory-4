@@ -7,6 +7,6 @@ for fileName, destPath in pairs(config.folders) do
     for file in files do
         for line in string.gmatch(file, "[%w-._]+") do
             os.execute("wget -f "..rootPath..fileName.."/"..line.." "..destPath.."/"..line)
-        end 
+        end
     end
 end

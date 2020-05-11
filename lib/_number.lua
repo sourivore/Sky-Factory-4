@@ -1,7 +1,7 @@
 local _number = {}
 
 _number.reduceUnit = function(number, unit, precision)
-  local precision = precision or 2
+  precision = precision or 2
   local unitLvl = 0
   local unitPrefixes = {"n", "µ", "m", "", "k", "M", "G"}
   if math.abs(number) > 1000 then

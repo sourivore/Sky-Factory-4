@@ -5,5 +5,4 @@ for line in f:lines() do
     packages.loaded[string.gsub(line, ".lua", "")] = nil
 	print("Uncached "..line)
 end
-   
 f:close()
