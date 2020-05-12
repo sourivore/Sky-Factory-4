@@ -21,7 +21,7 @@ local signalReturnCall = function(address, port, key, callbackSuccess, callbackF
     callbackSuccess()
   else
     if signalReturnAttempts[key] < maxAttempts then
-      modem.send(address, port, key, type, ...)
+      modem.send(address, port, key, ...)
       signalReturnAttempts[key] = signalReturnAttempts[key] + 1
     else
       signalReturnCancel(key, signalReturnStatus)
