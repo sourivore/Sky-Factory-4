@@ -16,8 +16,8 @@ _logic.caseCheck = function(testFunction, ...)
 	return _table.check(testFunction, test, {...})
 end
 
-_logic.caseFilter = function(filterFunction, ...)
-	return _table.filter(filterFunction, test, {...})
+_logic.caseFilter = function(filterFunction, tableToFilter)
+	return _table.filter(filterFunction, test, tableToFilter)
 end
 
 return _logic
