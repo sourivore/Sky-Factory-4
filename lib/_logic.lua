@@ -1,4 +1,4 @@
-local _array = require("_array")
+local _table = require("_table")
 
 local _logic = {}
 
@@ -9,7 +9,7 @@ _logic.switch = function(...)
 end
 
 _logic.case = function(...)
-  return _array.equals(test, {...})
+  return _table.equals(test, {...})
 end
 
 return _logic
