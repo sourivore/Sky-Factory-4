@@ -1,5 +1,6 @@
 local component = require("component")
 local event = require("event")
+local _table = require("_table")
 local modem = component.modem
 local _event = {}
 
@@ -37,8 +38,9 @@ local signalReturn = function(address, port, key, callbackSuccess, callbackFailu
   end
 end
 
-_event.returnSignalCheck = function(key)
-  signalReturnStatus[key] = true
+_event.returnSignalCheck = function(callReturns, callReturn)
+  signalReturnStatus[callReturn[2]] = true
+  _table.remove(callReturns, callReturn)
 end
 
 _event.removeListeners = function(key)
