@@ -5,6 +5,7 @@ local _logic = require("_logic")
 local modem = component.modem
 local _event = {}
 
+local callReturns = {}
 local signalReturnStatus = {}
 local signalReturnIds = {}
 local signalReturnAttempts = {}
@@ -46,7 +47,7 @@ local filterReturn = function(tableTest, tableCheck)
   return result
 end
 
-_event.returnSignalCheck = function(callReturns, callReturn)
+_event.returnSignalCheck = function(callReturn)
   signalReturnStatus[callReturn[2]] = true
   _table.remove(callReturns, callReturn)
 end
@@ -64,7 +65,6 @@ _event.sendTimeout = function(address,
                               key,
                               callbackSuccess,
                               callbackFailure,
-                              callReturns,
                               delay,
                               maxAttempts,
                               ...)
@@ -77,7 +77,7 @@ _event.sendTimeout = function(address,
 	  math.huge)
 end
 
-_event.getCallReturn = function(callReturns)
+_event.getCallReturn = function()
   return _logic.caseFilter(filterReturn, callReturns)[1]
 end
 
