@@ -22,7 +22,7 @@ _table.filter = function(filterFunction, tableTest, tablesCheck)
 	local result = {}
 	for _, tableCheck in pairs(tablesCheck) do
 		if filterFunction(tableTest, tableCheck) then
-			result.insert(tableCheck)
+			table.insert(result, tableCheck)
 		end
 	end
 	return result
