@@ -85,7 +85,6 @@ end
 _event.processCallReturn = function(port, type)
   local callReturn = getCallReturn(port, type)
   if callReturn then
-    print(port.." - "..type)
     returnSignalCheck(callReturn)
   end
 end
