@@ -1,6 +1,7 @@
 local component = require("component")
 local event = require("event")
 local _table = require("_table")
+local _logic = require("_logic")
 local modem = component.modem
 local _event = {}
 
@@ -38,6 +39,13 @@ local signalReturn = function(address, port, key, callbackSuccess, callbackFailu
   end
 end
 
+local filterReturn = function(tableTest, tableCheck)
+  local result = tableTest[1] == tableCheck[1]
+          and tableTest[2] == tableCheck[2].."_RETURN"
+          and #tableTest == #tableCheck
+  return result
+end
+
 _event.returnSignalCheck = function(callReturns, callReturn)
   signalReturnStatus[callReturn[2]] = true
   _table.remove(callReturns, callReturn)
@@ -68,5 +76,10 @@ _event.sendTimeout = function(address,
 	  signalReturn(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...),
 	  math.huge)
 end
+
+_event.getCallReturn = function(callReturns)
+  return _logic.caseFilter(filterReturn, callReturns)[1]
+end
+
 
 return _event
