@@ -15,7 +15,7 @@ local signalReturnCancel = function(key)
   signalReturnAttempts[key] = 0
 end
 
-local signalReturnCall = function(address, port, key, callbackSuccess, callbackFailure, maxAttempts, type, ...)
+local signalReturnCall = function(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...)
   if signalReturnStatus[key] then
     signalReturnCancel(key, signalReturnStatus)
     callbackSuccess()
@@ -30,10 +30,10 @@ local signalReturnCall = function(address, port, key, callbackSuccess, callbackF
   end
 end
 
-local signalReturn = function(address, port, key, callbackSuccess, callbackFailure, maxAttempts, type, ...)
+local signalReturn = function(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...)
   local payload = ...
   return function()
-    signalReturnCall(address, port, key, callbackSuccess, callbackFailure, maxAttempts, type, payload)
+    signalReturnCall(address, port, key, callbackSuccess, callbackFailure, maxAttempts, payload)
   end
 end
 
@@ -57,14 +57,13 @@ _event.sendTimeout = function(address,
                               callReturns,
                               delay,
                               maxAttempts,
-                              type,
                               ...)
   table.insert(callReturns, {port, type})
   signalReturnCancel(key, signalReturnStatus)
-  signalReturnCall(address, port, key, callbackSuccess, callbackFailure, maxAttempts, type, ...)
+  signalReturnCall(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...)
   signalReturnIds[key] = event.timer(
 	  delay,
-	  signalReturn(address, port, key, callbackSuccess, callbackFailure, maxAttempts, type, ...),
+	  signalReturn(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...),
 	  math.huge)
 end
 
