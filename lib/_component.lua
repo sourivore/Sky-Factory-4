@@ -1,8 +1,11 @@
 local event = require("event")
 local component = require("component")
+local term = require("term")
 local _gpu = require("_gpu")
 local _text = require("_text")
+local _event = require("_event")
 local gpu = component.gpu
+local modem = component.modem
 local resX, resY = gpu.getResolution()
 
 local _component = {}
@@ -13,6 +16,13 @@ local onTouch = function(state)
 			state.close = true
 		end
 	end
+end
+
+_component.init = function()
+	_event.removeListeners("modem_message")
+	_event.removeListeners("touch")
+	modem.close()
+	term.clear()
 end
 
 _component.closeBtn = function(state)
