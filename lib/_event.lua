@@ -58,7 +58,7 @@ _event.sendTimeout = function(address,
                               delay,
                               maxAttempts,
                               ...)
-  table.insert(callReturns, {port, type})
+  table.insert(callReturns, {port, key})
   signalReturnCancel(key, signalReturnStatus)
   signalReturnCall(address, port, key, callbackSuccess, callbackFailure, maxAttempts, ...)
   signalReturnIds[key] = event.timer(
