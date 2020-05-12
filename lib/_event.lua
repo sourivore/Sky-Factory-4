@@ -77,7 +77,8 @@ _event.sendTimeout = function(address,
 	  math.huge)
 end
 
-_event.getCallReturn = function()
+_event.getCallReturn = function(port, type)
+  _logic.switch(port, type)
   return _logic.caseFilter(filterReturn, callReturns)[1]
 end
 
