@@ -47,7 +47,12 @@ local filterReturn = function(tableTest, tableCheck)
   return result
 end
 
-_event.returnSignalCheck = function(callReturn)
+local getCallReturn = function(port, type)
+  _logic.switch(port, type)
+  return _logic.caseFilter(filterReturn, callReturns)[1]
+end
+
+local returnSignalCheck = function(callReturn)
   signalReturnStatus[callReturn[2]] = true
   _table.remove(callReturns, callReturn)
 end
@@ -77,10 +82,12 @@ _event.sendTimeout = function(address,
 	  math.huge)
 end
 
-_event.getCallReturn = function(port, type)
-  _logic.switch(port, type)
-  return _logic.caseFilter(filterReturn, callReturns)[1]
+_event.processCallReturn = function(port, type)
+  local callReturn = getCallReturn(port, type)
+  if callReturn then
+    print(port.." - "..type)
+    returnSignalCheck(callReturns, callReturn)
+  end
 end
-
 
 return _event
