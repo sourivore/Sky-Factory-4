@@ -57,6 +57,19 @@ local returnSignalCheck = function(callReturn)
   _table.remove(callReturns, callReturn)
 end
 
+_event.listenModemMessage = function(eventFunction)
+  event.listen("modem_message",
+    function(_, _, from, port, _, type, ...)
+      _event.processCallReturn(from, port, type)
+
+      _logic.switch(port, type)
+
+      eventFunction(...)
+
+    end
+  )
+end
+
 _event.removeListeners = function(key)
   for _,v in pairs(event.handlers) do
     if v.key == key then
