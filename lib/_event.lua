@@ -82,10 +82,12 @@ _event.sendTimeout = function(address,
 	  math.huge)
 end
 
-_event.processCallReturn = function(port, type)
+_event.processCallReturn = function(from, port, type)
   local callReturn = getCallReturn(port, type)
   if callReturn then
     returnSignalCheck(callReturn)
+  else
+    modem.send(from, port, type.."_RETURN")
   end
 end
 
