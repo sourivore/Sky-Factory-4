@@ -7,6 +7,7 @@ local _event = require("_event")
 local _table = require("_table")
 local _computer = require("_computer")
 local _modem = require("_modem")
+local _number = require("_number")
 local gpu = component.gpu
 local modem = component.modem
 local resX, resY = gpu.getResolution()
@@ -34,8 +35,10 @@ _component.init = function(remoteComputers, remoteComputersInfos)
 			local payload = {...}
 			local computerType = payload[1]
 			local computerPort = payload[2]
+			local selfComputerPort = _computer.getPort()
+			local communicationPort = _number.shrink(computerPort, selfComputerPort)
 			if port == INIT_PORT and type == "SEND_ADDRESS" and _table.contains(remoteComputers, computerType) then
-				local remoteComputerInfo = {["address"] = from, ["port"] = computerPort}
+				local remoteComputerInfo = {["address"] = from, ["port"] = communicationPort}
 				remoteComputersInfos[computerType] = remoteComputerInfo
 			end
 		end
