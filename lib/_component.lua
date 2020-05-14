@@ -30,6 +30,7 @@ _component.init = function(remoteComputers, remoteComputersInfos)
 	modem.close()
 	term.clear()
 	_modem.openPort(INIT_PORT)
+	_computer.askAddress()
 	event.listen("modem_message",
 		function(_, _, from, port, _, type, ...)
 			local payload = {...}
