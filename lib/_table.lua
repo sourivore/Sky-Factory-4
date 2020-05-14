@@ -15,7 +15,7 @@ end
 local reduce = function(reduceFunction, tableFull)
 	local result = {}
 	for _, value in pairs(tableFull) do
-		table.insert(reduceFunction(value))
+		table.insert(result, reduceFunction(value))
 	end
 	return result
 end
