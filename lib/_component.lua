@@ -33,14 +33,16 @@ _component.init = function(remoteComputers, remoteComputersInfos)
 	_computer.askAddress()
 	event.listen("modem_message",
 		function(_, _, from, port, _, type, ...)
-			local payload = {...}
-			local computerType = payload[1]
-			local computerPort = payload[2]
-			local selfComputerPort = _computer.getPort()
-			local communicationPort = _number.shrink(computerPort, selfComputerPort)
-			if port == INIT_PORT and type == "SEND_ADDRESS" and _table.contains(remoteComputers, computerType) then
-				local remoteComputerInfo = {["address"] = from, ["port"] = communicationPort}
-				remoteComputersInfos[computerType] = remoteComputerInfo
+			if port == INIT_PORT and type == "SEND_ADDRESS" then
+				local payload = {...}
+				local computerType = payload[1]
+				local computerPort = payload[2]
+				local selfComputerPort = _computer.getPort()
+				local communicationPort = _number.shrink(computerPort, selfComputerPort)
+				if _table.contains(remoteComputers, computerType) then
+					local remoteComputerInfo = {["address"] = from, ["port"] = communicationPort}
+					remoteComputersInfos[computerType] = remoteComputerInfo
+				end
 			elseif port == INIT_PORT and type == "ASK_ADDRESS" then
 				_computer.sendAddress()
 			end
