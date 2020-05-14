@@ -42,7 +42,7 @@ _table.reduceProp = function(prop, tableFull)
 	local reduceFunction = function(element)
 		return element[prop]
 	end
-	reduce(reduceFunction, tableFull)
+	return reduce(reduceFunction, tableFull)
 end
 
 
