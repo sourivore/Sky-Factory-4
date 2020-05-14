@@ -1,5 +1,5 @@
 
-local component = require("_component")
+local component = require("component")
 local _config = require("_config")
 local modem = component.modem
 
