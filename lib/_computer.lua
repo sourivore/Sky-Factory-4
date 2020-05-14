@@ -1,11 +1,14 @@
 
 local component = require("component")
 local _config = require("_config")
+local _modem = require("_modem")
 local modem = component.modem
 
 local _computer = {}
 
 local INIT_PORT = 1
+
+_modem.openPort(INIT_PORT)
 
 local getComputerType = function()
     return _config.computerType
