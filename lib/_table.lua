@@ -12,6 +12,14 @@ local equals = function(table1, table2)
 	return true
 end
 
+local reduce = function(reduceFunction, tableFull)
+	local result = {}
+	for _, value in pairs(tableFull) do
+		table.insert(reduceFunction(value))
+	end
+	return result
+end
+
 _table.equals = equals
 
 _table.check = function(checkFunction, tableTest, tableCheck)
@@ -28,12 +36,31 @@ _table.filter = function(filterFunction, tableTest, tablesCheck)
 	return result
 end
 
+_table.reduce = reduce
+
+_table.reduceProp = function(prop, tableFull)
+	local reduceFunction = function(element)
+		return element[prop]
+	end
+	reduce(reduceFunction, tableFull)
+end
+
+
 _table.remove = function(tableValues, value)
 	for index, tableValue in pairs(tableValues) do
-		if equals(tableValue, value) then
+		if tableValue == value or equals(tableValue, value) then
 			table.remove(tableValues, index)
 		end
 	end
+end
+
+_table.contains = function(tableValues, value)
+	for _, tableValue in pairs(tableValues) do
+		if tableValue == value or equals(tableValue, value) then
+			return true
+		end
+	end
+	return false
 end
 
 return _table

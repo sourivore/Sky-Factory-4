@@ -4,9 +4,14 @@ local term = require("term")
 local _gpu = require("_gpu")
 local _text = require("_text")
 local _event = require("_event")
+local _table = require("_table")
+local _computer = require("_computer")
+local _modem = require("_modem")
 local gpu = component.gpu
 local modem = component.modem
 local resX, resY = gpu.getResolution()
+
+local INIT_PORT = 1
 
 local _component = {}
 
@@ -18,11 +23,24 @@ local onTouch = function(state)
 	end
 end
 
-_component.init = function()
+_component.init = function(remoteComputers, remoteComputersInfos)
 	_event.removeListeners("modem_message")
 	_event.removeListeners("touch")
 	modem.close()
 	term.clear()
+	_modem.openPort(INIT_PORT)
+	event.listen("modem_message",
+		function(_, _, from, port, _, type, ...)
+			local payload = {...}
+			local computerType = payload[1]
+			local computerPort = payload[2]
+			if port == INIT_PORT and type == "SEND_ADDRESS" and _table.contains(remoteComputers, computerType) then
+				local remoteComputerInfo = {["address"] = from, ["port"] = computerPort}
+				remoteComputersInfos[computerType] = remoteComputerInfo
+			end
+		end
+	)
+	_computer.sendAddress()
 end
 
 _component.closeBtn = function(state)

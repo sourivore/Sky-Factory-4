@@ -1,8 +1,8 @@
-local config = require("_config")
+local _config = require("_config")
 local internet = require("internet")
-local rootPath = config.rootPath
+local rootPath = _config.rootPath
 
-for fileName, destPath in pairs(config.folders) do
+for fileName, destPath in pairs(_config.folders) do
     local files = internet.request(rootPath.."files/"..fileName..".txt")
     for file in files do
         for line in string.gmatch(file, "[%w-._]+") do
