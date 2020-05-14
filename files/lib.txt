@@ -1,4 +1,5 @@
 _component.lua
+_computer.lua
 _event.lua
 _gpu.lua
 _logic.lua
