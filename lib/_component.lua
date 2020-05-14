@@ -40,6 +40,8 @@ _component.init = function(remoteComputers, remoteComputersInfos)
 			if port == INIT_PORT and type == "SEND_ADDRESS" and _table.contains(remoteComputers, computerType) then
 				local remoteComputerInfo = {["address"] = from, ["port"] = communicationPort}
 				remoteComputersInfos[computerType] = remoteComputerInfo
+			elseif port == INIT_PORT and type == "ASK_ADDRESS" then
+				_computer.sendAddress()
 			end
 		end
 	)

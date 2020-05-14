@@ -19,6 +19,10 @@ _computer.getComputerType = getComputerType
 
 _computer.getPort = getPort
 
+_computer.askAddress = function()
+    modem.broadcast(INIT_PORT, "ASK_ADDRESS")
+end
+
 _computer.sendAddress = function()
     modem.broadcast(INIT_PORT, "SEND_ADDRESS", getComputerType(), getPort())
 end
