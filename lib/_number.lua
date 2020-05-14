@@ -21,7 +21,7 @@ end
 
 _number.shrink = function(number1, number2)
   local lowest = math.min(number1, number2)
-  local highest = math.min(number1, number2)
+  local highest = math.max(number1, number2)
   return lowest * (lowest - 1) / 2 + highest
 end
 

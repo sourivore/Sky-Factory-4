@@ -8,8 +8,6 @@ local _computer = {}
 
 local INIT_PORT = 1
 
-_modem.openPort(INIT_PORT)
-
 local getComputerType = function()
     return _config.computerType
 end
@@ -23,10 +21,12 @@ _computer.getComputerType = getComputerType
 _computer.getPort = getPort
 
 _computer.askAddress = function()
+    _modem.openPort(INIT_PORT)
     modem.broadcast(INIT_PORT, "ASK_ADDRESS")
 end
 
 _computer.sendAddress = function()
+    _modem.openPort(INIT_PORT)
     modem.broadcast(INIT_PORT, "SEND_ADDRESS", getComputerType(), getPort())
 end
 
