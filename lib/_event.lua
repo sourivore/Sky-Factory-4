@@ -4,6 +4,7 @@ local _table = require("_table")
 local _logic = require("_logic")
 local modem = component.modem
 local _event = {}
+local INIT_PORT = 1
 
 local callReturns = {}
 local signalReturnStatus = {}
@@ -60,7 +61,9 @@ end
 _event.listenModemMessage = function(eventFunction)
   event.listen("modem_message",
     function(_, _, from, port, _, type, ...)
-      _event.processCallReturn(from, port, type)
+      if port ~= INIT_PORT then
+        _event.processCallReturn(from, port, type)
+      end
 
       _logic.switch(port, type)
 
