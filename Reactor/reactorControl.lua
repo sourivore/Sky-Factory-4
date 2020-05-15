@@ -37,7 +37,6 @@ local listenModemMessage = function()
 	if _logic.case(relayPort, MSG_GET_STATUS) then
 	  postStatus()
 	elseif _logic.case(relayPort, MSG_ACTIVATE_POWER) then
-		print(relayPort.." - ACTIVATE REACTOR")
 		if not reactor.isComplete() then
 			_gpu.set(1, 0,
 				_text.alignCenter(os.date("[%X] Le réacteur a essayé de démarrer un réacteur incomplet"), resX), 0, C_KO)
