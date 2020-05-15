@@ -16,10 +16,10 @@ local MAX_ENERGY_PERCENT = 90
 local MAX_ITERATION = 10
 local DELAY_ITERATION = 10
 -- local MSG_ERROR = "ERROR"
-local SHUTDOWN_POWER = "SHUTDOWN_POWER"
-local ACTIVATE_POWER = "ACTIVATE_POWER"
-local GET_STATUS = "GET_STATUS"
-local POST_STATUS = "POST_STATUS"
+local MSG_SHUTDOWN_POWER = "SHUTDOWN_POWER"
+local MSG_ACTIVATE_POWER = "ACTIVATE_POWER"
+local MSG_GET_STATUS = "GET_STATUS"
+local MSG_POST_STATUS = "POST_STATUS"
 local RELAY = "RELAY"
 local C_BLACK, C_WHITE, C_OK, C_KO, C_INFO, C_INFO2 = 0x000000, 0xffffff, 0x22af4b, 0xee2524, 0x0f89ca, 0xf9df30
 local resX, _ = gpu.getResolution()
@@ -34,7 +34,7 @@ local relayPort = remoteComputersInfos[RELAY].port
 
 local listenModemMessage = function(...)
 	local payload = {...}
-	if _logic.case(relayPort, POST_STATUS) then
+	if _logic.case(relayPort, MSG_POST_STATUS) then
 		reactorActivated = payload[1]
 		_gpu.setAll(-12, 2,
 			{
@@ -54,7 +54,7 @@ local changeReactorStatus = function(type)
 
 _event.listenModemMessage(listenModemMessage)
 
-_event.sendTimeout(relayAddress, relayPort, GET_STATUS, nil, getStatusFailure, DELAY_ITERATION, MAX_ITERATION)
+_event.sendTimeout(relayAddress, relayPort, MSG_GET_STATUS, nil, getStatusFailure, DELAY_ITERATION, MAX_ITERATION)
 
 -- _gpu.set(1, 0, _text.alignCenter(msgKO, resX), 0, C_KO)
 -- _gpu.set(1, 0, _text.alignCenter("Tentative "..iteration.." échouée. Nouvelle tentative...", resX), 0, C_KO)
@@ -101,9 +101,9 @@ while not _component.isClosed() do
 	lastTime = computer.uptime()
 	lastEnergy = powerCell.getEnergyStored()
 	if energyPercent > MAX_ENERGY_PERCENT and reactorActivated then
-		changeReactorStatus(SHUTDOWN_POWER)
+		changeReactorStatus(MSG_SHUTDOWN_POWER)
 	elseif energyPercent < MIN_ENERGY_PERCENT and not reactorActivated then
-		changeReactorStatus(ACTIVATE_POWER)
+		changeReactorStatus(MSG_ACTIVATE_POWER)
 	end
 	_gpu.setAll(2, 2,
 		{

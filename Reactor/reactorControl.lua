@@ -1,60 +1,68 @@
 local component = require("component")
 local event = require("event")
-local term = require("term")
+local _logic = require("_logic")
 local _event = require("_event")
 local _gpu = require("_gpu")
 local _text = require("_text")
 local _component = require("_component")
 local gpu = component.gpu
-local modem = component.modem
 local reactor = component.nc_fission_reactor
 
-local COMMUNICATION_PORT = 22356
-local MSG_TYPE_ACTIVATION = "MSG_TYPE_ACTIVATION"
+local MSG_GET_STATUS = "MSG_GET_STATUS"
+local MSG_POST_STATUS = "MSG_POST_STATUS"
 local MSG_SHUTDOWN_POWER = "SHUTDOWN_POWER"
 local MSG_ACTIVATE_POWER = "ACTIVATE_POWER"
-local MSG_ERROR = "ERROR"
-local MSG_OK = "OK"
+-- local MSG_ERROR = "ERROR"
+local RELAY = "RELAY"
 local C_BLACK, C_WHITE, C_OK, C_KO, C_INFO2 = 0x000000, 0xffffff, 0x22af4b, 0xee2524, 0xf9df30
 local resX, resY = gpu.getResolution()
-local state = {close = false}
 
-_event.removeListeners("modem_message")
-_event.removeListeners("touch")
-term.clear()
+local remoteComputers = {RELAY}
+local remoteComputersInfos = {}
 
-if not modem.isOpen(COMMUNICATION_PORT) then
-	modem.open(COMMUNICATION_PORT)
+_component.init(remoteComputers, remoteComputersInfos, true)
+
+local relayAddress = remoteComputersInfos[RELAY].address
+local relayPort = remoteComputersInfos[RELAY].port
+
+local postStatusFailure = function()
+	_gpu.set(1, 0, _text.alignCenter("Aucune réponse de l'ordinateur distant", resX), 0, C_KO)
 end
 
-local onMessageReceived = function(type, msg)
-	if not type == MSG_TYPE_ACTIVATION then
-		return
-	end
-	if not reactor.isComplete() then
-		_gpu.set(1, 0,
-			_text.alignCenter(os.date("[%X] Le réacteur a essayé de démarrer un réacteur incomplet"), resX), 0, C_KO)
-		modem.broadcast(COMMUNICATION_PORT, MSG_TYPE_ACTIVATION, MSG_ERROR)
-	elseif msg == MSG_SHUTDOWN_POWER then
-		--SHUTDOWN REACTOR
-		if reactor.isProcessing() then
+local postStatus = function()
+	_event.sendTimeout(relayAddress, relayPort, MSG_POST_STATUS, nil, postStatusFailure, 1, 3, reactor.isProcessing())
+end
+
+local listenModemMessage = function()
+	if _logic.case(relayPort, MSG_GET_STATUS) then
+	  postStatus()
+	elseif _logic.case(relayPort, MSG_ACTIVATE_POWER) then
+		print(relayPort.." - ACTIVATE REACTOR")
+		if not reactor.isComplete() then
+			_gpu.set(1, 0,
+				_text.alignCenter(os.date("[%X] Le réacteur a essayé de démarrer un réacteur incomplet"), resX), 0, C_KO)
+		elseif not reactor.isProcessing() then
+			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Démarrage du réacteur"), resX), 0, C_INFO2)
+			reactor.activate()
+		else
+			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Le réacteur est déjà démarré"), resX), 0, C_KO)
+		end
+		postStatus()
+	elseif _logic.case(relayPort, MSG_SHUTDOWN_POWER) then
+		if not reactor.isComplete() then
+			_gpu.set(1, 0,
+				_text.alignCenter(os.date("[%X] Le réacteur a essayé d'arrêter un réacteur incomplet"), resX), 0, C_KO)
+		elseif reactor.isProcessing() then
 			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Arrêt du réacteur"), resX), 0, C_INFO2)
 			reactor.deactivate()
 		else
 			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Le réacteur est déjà arrêté"), resX), 0, C_KO)
 		end
-		modem.broadcast(COMMUNICATION_PORT, MSG_TYPE_ACTIVATION, MSG_OK, reactor.isProcessing())
-	elseif msg == MSG_ACTIVATE_POWER then
-		--ACTIVATE POWER
-		if reactor.isProcessing() then
-			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Le réacteur est déjà démarré"), resX), 0, C_KO)
-		else
-			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Démarrage du réacteur"), resX), 0, C_INFO2)
-			reactor.activate()
-		end
-		modem.broadcast(COMMUNICATION_PORT, MSG_TYPE_ACTIVATION, MSG_OK, reactor.isProcessing())
+		postStatus()
 	end
-end
+  end
+
+_event.listenModemMessage(listenModemMessage)
 
 local drawPowerBtn = function(cPower)
 	_gpu.draw(-16, -9, {cPower}, {
@@ -75,23 +83,16 @@ local onChangeActivation = function(_, _, x, y)
 		if reactor.isProcessing() then
 			reactor.deactivate()
 			drawPowerBtn(C_OK)
+			postStatus()
 		else
 			reactor.activate()
 			drawPowerBtn(C_KO)
+			postStatus()
 		end
 	end
 end
 
-
-event.listen("modem_message",
-	function(_, _, _, _, _, type, msg)
-		onMessageReceived(type, msg)
-	end
-)
-
 event.listen("touch", onChangeActivation)
-
-_component.closeBtn(state)
 
 _gpu.set(2,2, reactor.getFissionFuelName(), 12, C_INFO2)
 
@@ -104,7 +105,7 @@ end
 
 drawPowerBtn(cPower)
 
-while not state.close do
+while not _component.isClosed() do
 	_gpu.setIf(reactor.isProcessing(), -7, 2, {"ALLUMÉ", C_OK}, {"ÉTEINT", C_KO}, 0, C_WHITE, C_BLACK)
 	_component.bargraphH(2, 4, -1, 1, reactor.getEnergyStored(), reactor.getMaxEnergyStored())
 	os.sleep(1)
