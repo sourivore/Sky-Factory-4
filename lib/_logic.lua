@@ -4,6 +4,10 @@ local _logic = {}
 
 local test
 
+_logic.getTest = function()
+	return test
+end
+
 _logic.switch = function(...)
 	test = {...}
 end
@@ -18,6 +22,10 @@ end
 
 _logic.caseFilter = function(filterFunction, tableToFilter)
 	return _table.filter(filterFunction, test, tableToFilter)
+end
+
+_logic.caseIn = function(...)
+	return _table.contains({...}, test)
 end
 
 return _logic

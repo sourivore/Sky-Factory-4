@@ -29,6 +29,7 @@ local powerAddress = remoteComputersInfos["POWER"].address
 local powerPort = remoteComputersInfos["POWER"].port
 
 local listenModemMessage = function(...)
+  local payload = {...}
   if _logic.case(powerPort, "GET_STATUS") then
     print(powerPort.." - GET STATUS")
     _event.sendTimeout(reactorAddress, reactorPort, "GET_STATUS", getStatusSuccess, getStatusFailure, 5, 10)
@@ -41,15 +42,13 @@ local listenModemMessage = function(...)
   elseif _logic.case(reactorPort, "POST_STATUS") then
     print(reactorPort.." - POST STATUS")
     _event.sendTimeout(powerAddress, powerPort, "POST_STATUS", postStatusSuccess, postStatusFailure, 1, 3, ...)
-  elseif _logic.case(reactorPort, "GET_STATUS_ERROR") then
-    print(reactorPort.." - GET STATUS ERROR")
-    _event.sendTimeout(powerAddress, powerPort, "GET_STATUS_ERROR", nil, nil, 5, 10, ...)
-  elseif _logic.case(reactorPort, "ACTIVATE_REACTOR_ERROR") then
-    print(reactorPort.." - ACTIVATE REACTOR ERROR")
-    _event.sendTimeout(powerAddress, powerPort, "ACTIVATE_REACTOR_ERROR", nil, nil, 5, 10, ...)
-  elseif _logic.case(reactorPort, "DESACTIVATE_REACTOR_ERROR") then
-    print(reactorPort.." - DESACTIVATE REACTOR ERROR")
-    _event.sendTimeout(powerAddress, powerPort, "DESACTIVATE_REACTOR_ERROR", nil, nil, 5, 10, ...)
+  elseif _logic.caseIn(
+    {reactorPort, "GET_STATUS_ERROR"},
+    {reactorPort, "ACTIVATE_REACTOR_ERROR"},
+    {reactorPort, "ACTIVATE_REACTOR_ERROR"}) then
+      print(reactorPort.." - ".._logic.getTest()[2])
+      print("ERREUR : "..payload[1])
+      _event.sendTimeout(powerAddress, powerPort, _logic.getTest()[2], nil, nil, 5, 10, ...)
   end
 end
 

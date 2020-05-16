@@ -20,16 +20,23 @@ local listenModemMessage = function(...)
     print(relayPort.." - POST STATUS")
     print("Statut récupéré : "..tostring(payload[1]))
     reactorStatus = payload[1]
-  elseif _logic.case(relayPort, "GET_STATUS_ERROR") then
-    print(relayPort.." - GET STATUS ERROR")
-    print("ERREUR : "..payload[1])
-  elseif _logic.case(relayPort, "ACTIVATE_REACTOR_ERROR") then
-    print(relayPort.." - ACTIVATE REACTOR ERROR")
-    print("ERREUR : "..payload[1])
-  elseif _logic.case(relayPort, "DESACTIVATE_REACTOR_ERROR") then
-    print(relayPort.." - DESACTIVATE REACTOR ERROR")
-    print("ERREUR : "..payload[1])
+  elseif _logic.casein(
+    {relayPort, "GET_STATUS_ERROR"},
+    {relayPort, "ACTIVATE_REACTOR_ERROR"},
+    {relayPort, "ACTIVATE_REACTOR_ERROR"}) then
+      print(relayPort.." - ".._logic.getTest()[2])
+      print("ERREUR : "..payload[1])
   end
+  --elseif _logic.case(relayPort, "GET_STATUS_ERROR") then
+  --  print(relayPort.." - GET STATUS ERROR")
+  --  print("ERREUR : "..payload[1])
+  --elseif _logic.case(relayPort, "ACTIVATE_REACTOR_ERROR") then
+  --  print(relayPort.." - ACTIVATE REACTOR ERROR")
+  --  print("ERREUR : "..payload[1])
+  --elseif _logic.case(relayPort, "ACTIVATE_REACTOR_ERROR") then
+  --  print(relayPort.." - DESACTIVATE REACTOR ERROR")
+  --  print("ERREUR : "..payload[1])
+  --end
 end
 
 _event.listenModemMessage(listenModemMessage)
