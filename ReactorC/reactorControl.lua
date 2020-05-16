@@ -33,14 +33,14 @@ local listenModemMessage = function()
     print(relayPort.." - ACTIVATE REACTOR")
     if not reactorStatus then
       reactorStatus = true
+      postStatus()
     end
-    postStatus()
   elseif _logic.case(relayPort, "DESACTIVATE_REACTOR") then
     print(relayPort.." - DESACTIVATE REACTOR")
     if reactorStatus then
       reactorStatus = false
+      postStatus()
     end
-    postStatus()
   end
 end
 

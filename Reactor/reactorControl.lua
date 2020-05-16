@@ -43,10 +43,10 @@ local listenModemMessage = function()
 		elseif not reactor.isProcessing() then
 			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Démarrage du réacteur"), resX), 0, C_INFO2)
 			reactor.activate()
+			postStatus()
 		else
 			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Le réacteur est déjà démarré"), resX), 0, C_KO)
 		end
-		postStatus()
 	elseif _logic.case(relayPort, MSG_SHUTDOWN_POWER) then
 		if not reactor.isComplete() then
 			_gpu.set(1, 0,
@@ -54,10 +54,10 @@ local listenModemMessage = function()
 		elseif reactor.isProcessing() then
 			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Arrêt du réacteur"), resX), 0, C_INFO2)
 			reactor.deactivate()
+			postStatus()
 		else
 			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Le réacteur est déjà arrêté"), resX), 0, C_KO)
 		end
-		postStatus()
 	end
   end
 
