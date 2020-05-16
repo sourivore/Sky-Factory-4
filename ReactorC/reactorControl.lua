@@ -25,21 +25,37 @@ local postStatus = function()
   _event.sendTimeout(relayAddress, relayPort, "POST_STATUS", postStatusSuccess, postStatusFailure, 1, 3, reactorStatus)
 end
 
+local postError = function(typeError, msgError)
+  _event.sendTimeout(relayAddress, relayPort, typeError, nil, nil, 1, 3, msgError)
+end
+
 local listenModemMessage = function()
   if _logic.case(relayPort, "GET_STATUS") then
     print(relayPort.." - GET STATUS")
-    postStatus()
+    if math.random(10) == 1 then
+      postError("GET_STATUS_ERROR", "Erreur dans le GET STATUS")
+    else
+      postStatus()
+    end
   elseif _logic.case(relayPort, "ACTIVATE_REACTOR") then
     print(relayPort.." - ACTIVATE REACTOR")
-    if not reactorStatus then
-      reactorStatus = true
-      postStatus()
+    if math.random(10) == 1 then
+      postError("ACTIVATE_REACTOR_ERROR", "Erreur dans le ACTIVATE REACTOR")
+    else
+      if not reactorStatus then
+        reactorStatus = true
+        postStatus()
+      end
     end
   elseif _logic.case(relayPort, "DESACTIVATE_REACTOR") then
     print(relayPort.." - DESACTIVATE REACTOR")
-    if reactorStatus then
-      reactorStatus = false
-      postStatus()
+    if math.random(10) == 1 then
+      postError("DESACTIVATE_REACTOR_ERROR", "Erreur dans le DESACTIVATE REACTOR")
+    else
+      if reactorStatus then
+        reactorStatus = false
+        postStatus()
+      end
     end
   end
 end
