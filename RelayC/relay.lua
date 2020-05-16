@@ -41,15 +41,15 @@ local listenModemMessage = function(...)
   elseif _logic.case(reactorPort, "POST_STATUS") then
     print(reactorPort.." - POST STATUS")
     _event.sendTimeout(powerAddress, powerPort, "POST_STATUS", postStatusSuccess, postStatusFailure, 1, 3, ...)
-  elseif _logic.case(powerPort, "GET_STATUS_ERROR") then
-    print(powerPort.." - GET STATUS ERROR")
-    _event.sendTimeout(reactorAddress, reactorPort, "GET_STATUS_ERROR", nil, nil, 5, 10, ...)
-  elseif _logic.case(powerPort, "ACTIVATE_REACTOR_ERROR") then
-    print(powerPort.." - ACTIVATE REACTOR ERROR")
-    _event.sendTimeout(reactorAddress, reactorPort, "ACTIVATE_REACTOR_ERROR", nil, nil, 5, 10, ...)
-  elseif _logic.case(powerPort, "DESACTIVATE_REACTOR_ERROR") then
-    print(powerPort.." - DESACTIVATE REACTOR ERROR")
-    _event.sendTimeout(reactorAddress, reactorPort, "DESACTIVATE_REACTOR_ERROR", nil, nil, 5, 10, ...)
+  elseif _logic.case(reactorPort, "GET_STATUS_ERROR") then
+    print(reactorPort.." - GET STATUS ERROR")
+    _event.sendTimeout(powerAddress, powerPort, "GET_STATUS_ERROR", nil, nil, 5, 10, ...)
+  elseif _logic.case(reactorPort, "ACTIVATE_REACTOR_ERROR") then
+    print(reactorPort.." - ACTIVATE REACTOR ERROR")
+    _event.sendTimeout(powerAddress, powerPort, "ACTIVATE_REACTOR_ERROR", nil, nil, 5, 10, ...)
+  elseif _logic.case(reactorPort, "DESACTIVATE_REACTOR_ERROR") then
+    print(reactorPort.." - DESACTIVATE REACTOR ERROR")
+    _event.sendTimeout(powerAddress, powerPort, "DESACTIVATE_REACTOR_ERROR", nil, nil, 5, 10, ...)
   end
 end
 
