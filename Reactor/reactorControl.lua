@@ -12,7 +12,8 @@ local MSG_GET_STATUS = "MSG_GET_STATUS"
 local MSG_POST_STATUS = "MSG_POST_STATUS"
 local MSG_SHUTDOWN_POWER = "SHUTDOWN_POWER"
 local MSG_ACTIVATE_POWER = "ACTIVATE_POWER"
--- local MSG_ERROR = "ERROR"
+local MAX_ITERATION = 10
+local DELAY_ITERATION = 10
 local RELAY = "RELAY"
 local C_BLACK, C_WHITE, C_OK, C_KO, C_INFO2 = 0x000000, 0xffffff, 0x22af4b, 0xee2524, 0xf9df30
 local resX, resY = gpu.getResolution()
@@ -30,7 +31,11 @@ local postStatusFailure = function()
 end
 
 local postStatus = function()
-	_event.sendTimeout(relayAddress, relayPort, MSG_POST_STATUS, nil, postStatusFailure, 1, 3, reactor.isProcessing())
+	_event.sendTimeout(relayAddress, relayPort, MSG_POST_STATUS, nil, postStatusFailure,
+						DELAY_ITERATION, MAX_ITERATION, reactor.isProcessing())
+end
+local postError = function(typeError, msgError)
+	_event.sendTimeout(relayAddress, relayPort, typeError, nil, nil, DELAY_ITERATION, MAX_ITERATION, msgError)
 end
 
 local listenModemMessage = function()
@@ -38,8 +43,10 @@ local listenModemMessage = function()
 	  postStatus()
 	elseif _logic.case(relayPort, MSG_ACTIVATE_POWER) then
 		if not reactor.isComplete() then
+			local message = "[%X] Le réacteur a essayé de démarrer un réacteur incomplet"
 			_gpu.set(1, 0,
-				_text.alignCenter(os.date("[%X] Le réacteur a essayé de démarrer un réacteur incomplet"), resX), 0, C_KO)
+				_text.alignCenter(os.date(message), resX), 0, C_KO)
+			postError(MSG_ACTIVATE_POWER.."_ERROR", message)
 		elseif not reactor.isProcessing() then
 			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Démarrage du réacteur"), resX), 0, C_INFO2)
 			reactor.activate()
@@ -49,8 +56,10 @@ local listenModemMessage = function()
 		end
 	elseif _logic.case(relayPort, MSG_SHUTDOWN_POWER) then
 		if not reactor.isComplete() then
+			local message = "[%X] Le réacteur a essayé d'arrêter un réacteur incomplet"
 			_gpu.set(1, 0,
-				_text.alignCenter(os.date("[%X] Le réacteur a essayé d'arrêter un réacteur incomplet"), resX), 0, C_KO)
+				_text.alignCenter(os.date(message), resX), 0, C_KO)
+			postError(MSG_ACTIVATE_POWER.."_ERROR", message)
 		elseif reactor.isProcessing() then
 			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Arrêt du réacteur"), resX), 0, C_INFO2)
 			reactor.deactivate()
@@ -79,7 +88,9 @@ end
 
 local onChangeActivation = function(_, _, x, y)
 	if x >= resX - 16 and x <= resX - 1 and y >= resY - 9 and y <= resY - 1 then
-		if reactor.isProcessing() then
+		if not reactor.isComplete() then
+			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Le réacteur est incomplet"), resX), 0, C_KO)
+		elseif reactor.isProcessing() then
 			reactor.deactivate()
 			drawPowerBtn(C_OK)
 			postStatus()

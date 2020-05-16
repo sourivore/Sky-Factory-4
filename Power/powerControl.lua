@@ -15,7 +15,6 @@ local MIN_ENERGY_PERCENT = 10
 local MAX_ENERGY_PERCENT = 90
 local MAX_ITERATION = 10
 local DELAY_ITERATION = 10
--- local MSG_ERROR = "ERROR"
 local MSG_SHUTDOWN_POWER = "SHUTDOWN_POWER"
 local MSG_ACTIVATE_POWER = "ACTIVATE_POWER"
 local MSG_GET_STATUS = "GET_STATUS"
@@ -41,6 +40,10 @@ local listenModemMessage = function(...)
 				{"Reactor = "},
 				{reactorActivated, {"OK", C_OK}, {"KO", C_KO}}
 			}, 12, C_WHITE, C_BLACK)
+	elseif _logic.caseIn(
+		{relayPort, MSG_ACTIVATE_POWER.."_ERROR"},
+		{relayPort, MSG_SHUTDOWN_POWER.."_ERROR"}) then
+			_gpu.set(1, 0, _text.alignCenter(payload[1], resX), 0, C_KO)
 	end
 end
 
@@ -55,11 +58,6 @@ local changeReactorStatus = function(type)
 _event.listenModemMessage(listenModemMessage)
 
 _event.sendTimeout(relayAddress, relayPort, MSG_GET_STATUS, nil, getStatusFailure, DELAY_ITERATION, MAX_ITERATION)
-
--- _gpu.set(1, 0, _text.alignCenter(msgKO, resX), 0, C_KO)
--- _gpu.set(1, 0, _text.alignCenter("Tentative "..iteration.." échouée. Nouvelle tentative...", resX), 0, C_KO)
--- controlPower(SHUTDOWN_POWER, "Le réacteur n'a pas pu être arrêté")
--- controlPower(ACTIVATE_POWER, "Le réacteur n'a pas pu être démarré")
 
 local lastTime = computer.uptime()
 local lastEnergy = powerCell.getEnergyStored()
