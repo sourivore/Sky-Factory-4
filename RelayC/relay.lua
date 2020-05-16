@@ -45,7 +45,7 @@ local listenModemMessage = function(...)
   elseif _logic.caseIn(
     {reactorPort, "GET_STATUS_ERROR"},
     {reactorPort, "ACTIVATE_REACTOR_ERROR"},
-    {reactorPort, "ACTIVATE_REACTOR_ERROR"}) then
+    {reactorPort, "DESACTIVATE_REACTOR_ERROR"}) then
       print(reactorPort.." - ".._logic.getTest()[2])
       print("ERREUR : "..payload[1])
       _event.sendTimeout(powerAddress, powerPort, _logic.getTest()[2], nil, nil, 5, 10, ...)

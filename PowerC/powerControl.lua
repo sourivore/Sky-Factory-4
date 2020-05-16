@@ -23,7 +23,7 @@ local listenModemMessage = function(...)
   elseif _logic.casein(
     {relayPort, "GET_STATUS_ERROR"},
     {relayPort, "ACTIVATE_REACTOR_ERROR"},
-    {relayPort, "ACTIVATE_REACTOR_ERROR"}) then
+    {relayPort, "DESACTIVATE_REACTOR_ERROR"}) then
       print(relayPort.." - ".._logic.getTest()[2])
       print("ERREUR : "..payload[1])
   end
