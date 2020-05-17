@@ -8,8 +8,8 @@ local _component = require("_component")
 local gpu = component.gpu
 local reactor = component.nc_fission_reactor
 
-local MSG_GET_STATUS = "MSG_GET_STATUS"
-local MSG_POST_STATUS = "MSG_POST_STATUS"
+local MSG_GET_STATUS = "GET_STATUS"
+local MSG_POST_STATUS = "POST_STATUS"
 local MSG_SHUTDOWN_POWER = "SHUTDOWN_POWER"
 local MSG_ACTIVATE_POWER = "ACTIVATE_POWER"
 local MAX_ITERATION = 10
