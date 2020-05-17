@@ -16,7 +16,6 @@ local MAX_ITERATION = 10
 local DELAY_ITERATION = 10
 local RELAY = "RELAY"
 local C_BLACK, C_WHITE, C_OK, C_KO, C_INFO2 = 0x000000, 0xffffff, 0x22af4b, 0xee2524, 0xf9df30
-local resX, resY = gpu.getResolution()
 
 local remoteComputers = {RELAY}
 local remoteComputersInfos = {}
@@ -27,6 +26,7 @@ local relayAddress = remoteComputersInfos[RELAY].address
 local relayPort = remoteComputersInfos[RELAY].port
 
 local postStatusFailure = function()
+	local resX, _ = gpu.getResolution()
 	_gpu.set(1, 0, _text.alignCenter("Aucune réponse de l'ordinateur distant", resX), 0, C_KO)
 end
 
@@ -39,6 +39,7 @@ local postError = function(typeError, msgError)
 end
 
 local listenModemMessage = function()
+	local resX, _ = gpu.getResolution()
 	if _logic.case(relayPort, MSG_GET_STATUS) then
 	  postStatus()
 	elseif _logic.case(relayPort, MSG_ACTIVATE_POWER) then
@@ -87,6 +88,7 @@ local drawPowerBtn = function(cPower)
 end
 
 local onChangeActivation = function(_, _, x, y)
+	local resX, resY = gpu.getResolution()
 	if x >= resX - 16 and x <= resX - 1 and y >= resY - 9 and y <= resY - 1 then
 		if not reactor.isComplete() then
 			_gpu.set(1, 0, _text.alignCenter(os.date("[%X] Le réacteur est incomplet"), resX), 0, C_KO)

@@ -10,7 +10,6 @@ local _modem = require("_modem")
 local _number = require("_number")
 local gpu = component.gpu
 local modem = component.modem
-local resX, resY = gpu.getResolution()
 local state = {close = false}
 
 local INIT_PORT = 1
@@ -18,6 +17,7 @@ local INIT_PORT = 1
 local _component = {}
 
 local onTouch = function()
+	local resX, resY = gpu.getResolution()
 	return function(_, _, x, y)
 		if x >= math.floor((resX-14)/2) + 1 and x <= math.floor((resX-14)/2) + 14 and y == resY- 2 then
 			state.close = true
@@ -26,6 +26,7 @@ local onTouch = function()
 end
 
 _component.init = function(remoteComputers, remoteComputersInfos, hasCloseBtn)
+	local resX, resY = gpu.getResolution()
 	_event.removeListeners("modem_message")
 	_event.removeListeners("touch")
 	modem.close()
@@ -67,6 +68,7 @@ _component.init = function(remoteComputers, remoteComputersInfos, hasCloseBtn)
 end
 
 _component.closeBtn = function()
+	local resX, _ = gpu.getResolution()
 	event.listen("touch", onTouch(state))
 	_gpu.fillColor(math.floor((resX-14)/2) + 1, -2, 14, 1, 0x1ba39c)
 	_gpu.set(math.floor((resX-14)/2) + 1, -2, _text.alignCenter("FERMER", 14), nil, 0xffffff, 0x1ba39c)
@@ -77,6 +79,7 @@ _component.isClosed = function()
 end
 
 _component.bargraphH = function(x, y, width, height, current, maximum)
+	local resX, _ = gpu.getResolution()
 	local newWidth = width
 	if width <= 0 then
         newWidth = resX + width - x + 1

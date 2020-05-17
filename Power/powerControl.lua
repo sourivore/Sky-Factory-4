@@ -21,7 +21,6 @@ local MSG_GET_STATUS = "GET_STATUS"
 local MSG_POST_STATUS = "POST_STATUS"
 local RELAY = "RELAY"
 local C_BLACK, C_WHITE, C_OK, C_KO, C_INFO, C_INFO2 = 0x000000, 0xffffff, 0x22af4b, 0xee2524, 0x0f89ca, 0xf9df30
-local resX, _ = gpu.getResolution()
 local reactorActivated = true
 local remoteComputers = {RELAY}
 local remoteComputersInfos = {}
@@ -32,6 +31,7 @@ local relayAddress = remoteComputersInfos[RELAY].address
 local relayPort = remoteComputersInfos[RELAY].port
 
 local listenModemMessage = function(...)
+	local resX, _ = gpu.getResolution()
 	local payload = {...}
 	if _logic.case(relayPort, MSG_POST_STATUS) then
 		reactorActivated = payload[1]
@@ -48,6 +48,7 @@ local listenModemMessage = function(...)
 end
 
 local getStatusFailure = function()
+	local resX, _ = gpu.getResolution()
 	_gpu.set(1, 0, _text.alignCenter("Aucune réponse de l'ordinateur distant", resX), 0, C_KO)
 end
 
